@@ -31,12 +31,12 @@ _processing_lock = threading.Lock()
 _processing_files: set[str] = set()
 
 # ─── 설정 ────────────────────────────────────────────────────────────────────
-INPUT_FOLDER     = r"C:\Users\정별\Desktop\doc_input"
+OUTPUT_BASE      = os.path.expanduser("~")
+INPUT_FOLDER     = os.path.join(OUTPUT_BASE, "Desktop", "doc_input")
 PROCESSED_DIR    = os.path.join(INPUT_FOLDER, "1_processed")
 LOG_DIR          = os.path.join(INPUT_FOLDER, "2_log")
 FINISHED_DIR     = os.path.join(INPUT_FOLDER, "3_finished")
 ARCHIVE_DIR      = os.path.join(INPUT_FOLDER, "4_archive")
-OUTPUT_BASE      = os.path.expanduser("~")
 LOG_FILE         = str(Path(__file__).resolve().parent / "doc_watcher.log")
 WBS_CONFIG_FILE  = Path(__file__).resolve().parent / "wbs_routing.json"
 
