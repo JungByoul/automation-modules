@@ -1,0 +1,5 @@
+{
+  "_comment": "WBS 스캔 설정. 새 최상위 폴더 추가 시 scan_roots에 추가. 경로 테이블은 여기서 관리하지 않음 — Claude가 실제 폴더를 직접 보고 판단.",
+  "scan_roots": ["1_Work", "2_Personal", "3_Dev", "4_Resources"],
+  "scan_depth": 3
+}

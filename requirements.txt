@@ -1,0 +1,5 @@
+watchdog
+python-docx
+anthropic
+python-dotenv
+plyer
