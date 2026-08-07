@@ -1,7 +1,2 @@
-.env
-*.log
-__pycache__/
-*.pyc
-rag_summary_build.py
-에이전트_구조_설명.txt
-이_폴더_설명.txt
+3.1_Agents/
+3.3_Request_mail_auto_writing/
