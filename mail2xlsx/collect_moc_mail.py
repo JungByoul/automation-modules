@@ -16,12 +16,13 @@ import re, datetime, os, time
 
 # ---------------------------------------------------------------- 경로/설정
 _HOME = os.path.expanduser("~")
-SRC = os.path.join(_HOME, r"1_Work\1.20_S-oil_Projects\1.20.00_인수인계_파일_원본(이경_책임)\4. 작업\(공유용) S-OIL mMDM 설비 MOC 현황_20260406.xlsx")
 BASE = os.path.join(_HOME, r"1_Work\1.20_S-oil_Projects\1.20.20_mMDM_MOC_관리대장(아카이브)")
-OUT_RESULT_DIR = os.path.join(BASE, "_메일수집_결과")   # 실행 결과 저장 폴더
+OUT_RESULT_DIR = os.path.join(BASE, "1.20.20.10_메일수집_결과")   # 실행 결과 저장 폴더
 SENDER_KEY = "infowise"                                 # 발신자 SMTP/이름 필터
 CUTOFF = datetime.date(2026, 7, 1)                      # 이 날짜 이후(포함) 접수건만
 SYNC_WAIT = 8                                           # 실행 시 강제 동기화 후 대기(초). 방금 온 메일도 잡히게
+ADDRBOOK = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "메일주소_주소록.xlsx")         # 메일→이름 매칭용 주소록 (없으면 매칭 없이 진행)
 
 # 컬럼 순서: 설비ID 오른쪽에 등록요청관련·비고, 비고 오른쪽에 접수 시간
 HEADER = ["no.", "접수일", "완료일(월)", "구분", "Workflow ID", "설비ID",
@@ -57,15 +58,46 @@ def parse_equipment_list(body):
         rows.append(dict(zip(h, cells)))
     return rows
 
-def cc_from_body(body):
+def load_addrbook():
+    """주소록 xlsx 전체 시트에서 {메일주소(소문자): 이름} 사전 생성.
+    각 시트 헤더 행에서 '메일' 포함 컬럼과 '요청자'/'담당자' 포함 컬럼을 찾아 매핑.
+    파일이 없거나 읽기 실패 시 빈 dict → 기존 동작(메일 원문 표기)으로 폴백."""
+    addr_map = {}
+    try:
+        wb = openpyxl.load_workbook(ADDRBOOK, read_only=True, data_only=True)
+    except Exception as e:
+        print(f"주소록 로드 실패({e}) → 메일 원문 사용")
+        return addr_map
+    for ws in wb.worksheets:
+        mail_col = name_col = None
+        for row in ws.iter_rows(values_only=True):
+            if mail_col is None:                 # 첫 행에서 헤더 위치 탐색
+                for i, v in enumerate(row):
+                    h = str(v or "").strip()
+                    if "메일" in h:
+                        mail_col = i
+                    elif "요청자" in h or "담당자" in h:
+                        name_col = i
+                if mail_col is None or name_col is None:
+                    break                        # 헤더를 못 찾는 시트는 건너뜀
+                continue
+            mail = str(row[mail_col] or "").strip().lower() if len(row) > mail_col else ""
+            name = str(row[name_col] or "").strip() if len(row) > name_col else ""
+            if mail and name and "@" in mail:
+                addr_map.setdefault(mail, name)
+    wb.close()
+    return addr_map
+
+def cc_from_body(body, addr_map):
     for ln in body.splitlines():
         m = re.match(r"\s*참조\s*[:：]\s*(.+)", ln)
         if m:
             addrs = re.findall(r"[\w.+-]+@[\w.-]+\.\w+", m.group(1))
             seen = []
             for a in addrs:
-                if a not in seen:
-                    seen.append(a)
+                disp = addr_map.get(a.lower(), a)   # 주소록에 있으면 이름, 없으면 메일 원문
+                if disp not in seen:
+                    seen.append(disp)
             return ", ".join(seen)
     return ""
 
@@ -121,6 +153,8 @@ def force_sync(ns):
         print("동기화 시도 실패(무시하고 진행):", e)
 
 def scan_outlook():
+    addr_map = load_addrbook()
+    print(f"주소록 {len(addr_map)}건 로드" if addr_map else "주소록 없음 → 메일 원문 사용")
     ns = win32.Dispatch("Outlook.Application").GetNamespace("MAPI")
     force_sync(ns)                       # 먼저 최신 메일 동기화
     inbox = ns.GetDefaultFolder(6)
@@ -150,7 +184,7 @@ def scan_outlook():
             matched += 1
             g = gubun(subj)
             body = it.Body or ""
-            cc = cc_from_body(body)
+            cc = cc_from_body(body, addr_map)
             sys_sent = parse_system_sent(body)      # mMDM 시스템 원본 발송시각
             eq = parse_equipment_list(body)
             if not eq:
