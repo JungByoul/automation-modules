@@ -24,10 +24,10 @@ SYNC_WAIT = 8                                           # 실행 시 강제 동�
 ADDRBOOK = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "메일주소_주소록.xlsx")         # 메일→이름 매칭용 주소록 (없으면 매칭 없이 진행)
 
-# 컬럼 순서: 설비ID 오른쪽에 등록요청관련·비고, 비고 오른쪽에 접수 시간
+# 컬럼 순서: 외부 클라우드 표 양식에 맞춤 — G=Criticality, H=기술식별번호, I=빈 열(자리표시), J=등록요청관련
 HEADER = ["no.", "접수일", "완료일(월)", "구분", "Workflow ID", "설비ID",
-          "등록요청관련", "비고", "접수 시간", "Criticality", "기술식별번호",
-          "SRCM DB 파일명", "RTS 대상 여부 및 확인", "MDM review 이후 확인", ""]
+          "Criticality", "기술식별번호", "", "등록요청관련", "비고", "접수 시간",
+          "SRCM DB 파일명", "RTS 대상 여부 및 확인", "MDM review 이후 확인"]
 
 # ---------------------------------------------------------------- 파싱 함수
 def smtp_of(item):
