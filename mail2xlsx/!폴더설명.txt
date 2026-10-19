@@ -1,0 +1,8 @@
+﻿[mail2xlsx]
+MOC 알림메일 수집→엑셀 자동화
+(prefix 미부여, 경로 하드코딩 유지)
+
+- collect_moc_mail.py : 메일수집 스크립트
+- 메일수집_실행.bat : 실행 배치
+- 메일주소_주소록.xlsx : 주소록
+- requirements.txt : 의존성

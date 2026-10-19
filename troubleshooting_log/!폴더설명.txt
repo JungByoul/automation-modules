@@ -1,0 +1,4 @@
+﻿[troubleshooting_log]
+PC 트러블슈팅 기록
+
+- 탐색기행_OneDrive쉘확장_트러블슈팅_v1.0_20260921.docx : 탐색기 행 해결기록

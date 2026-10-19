@@ -1,0 +1,7 @@
+﻿[skills_claude]
+Claude 스킬·규칙 md 백업본
+
+- folder-audit.md : 폴더점검 스킬
+- folder_structure.md : 폴더구조 규칙
+- gitgit.md : git 스킬
+- update-md.md : CLAUDE.md 수정 스킬

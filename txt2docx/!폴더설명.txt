@@ -1,0 +1,11 @@
+﻿[txt2docx]
+txt→docx 자동화 (doc-writer 스킬·watcher)
+(prefix 미부여, 경로 하드코딩 유지)
+
+- doc_watcher.py : 폴더감시 변환기
+- run_watcher.bat : watcher 실행
+- rag_summary_build.py : RAG 요약 빌드
+- wbs_routing.json : WBS 라우팅 설정
+- skills : doc-writer 스킬
+- 에이전트_구조_설명.txt : 구조 설명
+- 이_폴더_설명.txt : (구 폴더설명 스텁)
