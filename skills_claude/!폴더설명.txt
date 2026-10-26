@@ -5,3 +5,4 @@ Claude 스킬·규칙 md 백업본
 - folder_structure.md : 폴더구조 규칙
 - gitgit.md : git 스킬
 - update-md.md : CLAUDE.md 수정 스킬
+- weekly-plan/ : 주간 개인업무 계획 생성 스킬 (SKILL.md + weekly_ppt.py 스크립트 + examples 샘플)
